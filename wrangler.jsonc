@@ -6,6 +6,10 @@
 	"compatibility_flags": [
 		"nodejs_compat"
 	],
+	"vars": {
+		"AI_BASE_URL": "https://api.quickrouter.ai/v1",
+		"AI_MODEL": "gpt-5.6-sol"
+	},
 	"d1_databases": [
 		{
 			"binding": "DB",
