@@ -36,7 +36,6 @@ const YEAST_SYSTEM = "出芽酵母细胞周期；11 节点同步布尔网络；�
 const PROJECTS = [
   { id: "cd8", name: "CD8T 激活动力学", status: "进行中", abstract: "用 ODE、拟合和区分时间点解释群体阳性率先升后降。" },
   { id: "yeast", name: "酵母细胞周期", status: "可运行", abstract: "复现 Li 等（2004）同步布尔网络、7 个固定点和主 G1 吸引域。" },
-  { id: "pattern", name: "反应扩散斑图", status: "构想", abstract: "下一迭代的空间动力学案例。" },
 ];
 
 const P0: Params = { ko: .22, kc: .38, ks: .95, kd: .10, th: 1.20, sg: .22, kf: .036, fd: .025 };
@@ -137,7 +136,7 @@ export default function Home() {
   }, []);
   const loadCd8 = () => { setProject("cd8"); setProposal(null); setQ(CD8_QUESTION); setSystem(CD8_SYSTEM); setModules(["数据导入与检查","最小 ODE 网络","群体阳性率映射","多起点参数拟合","竞争模型比较","关键时间点推荐","新数据回灌"]); setNotice("CD8T 模拟基准已载入。"); };
   const loadYeast = () => { setProject("yeast"); setProposal(null); setQ(YEAST_QUESTION); setSystem(YEAST_SYSTEM); setModules(["论文参考轨迹","同步逻辑更新","2,048 初态穷举","Cln3 → SBF 边删除","复现检查"]); setNotice("酵母复现案例已载入。"); };
-  const choose = (id: string) => { setReady(false); if (id === "cd8") loadCd8(); else if (id === "yeast") loadYeast(); else { setProject(id); setQ("激活子—抑制子反应扩散体系在什么条件下形成稳定斑图？"); setSystem("二维反应扩散体系；当前仅为入口示例。"); setNotice("反应扩散案例尚未纳入本轮可运行范围。"); } };
+  const choose = (id: string) => { setReady(false); if (id === "cd8") loadCd8(); else loadYeast(); };
   const analyse = async () => {
     if (!q.trim() || !system.trim()) { setNotice("请先填写科学问题和研究体系"); return; }
     setAnalysisLoading(true); setNotice("服务端正在检索项目知识库并生成受控流程建议…");
