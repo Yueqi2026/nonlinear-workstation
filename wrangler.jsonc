@@ -1,0 +1,21 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "nonlinear-workstation",
+	"main": "vinext/server/fetch-handler",
+	"compatibility_date": "2026-09-27",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "nonlinear-workstation-db",
+			"database_id": "61e020e1-ed3a-4675-b711-efca9e581e27",
+			"remote": true,
+			"migrations_dir": "drizzle"
+		}
+	],
+	"observability": {
+		"enabled": true
+	}
+}
