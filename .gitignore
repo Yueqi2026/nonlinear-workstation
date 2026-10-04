@@ -39,6 +39,7 @@ yarn-error.log*
 # typescript
 next-env.d.ts
 /dist/
+*.tsbuildinfo
 /.wrangler/
 # Checkout-local tool state; never publish it.
 /.agents/
