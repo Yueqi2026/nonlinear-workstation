@@ -26,6 +26,10 @@ function okResponse(content) {
   return new Response(JSON.stringify({ choices: [{ message: { content } }] }), { status: 200 });
 }
 
+function partsResponse(parts) {
+  return new Response(JSON.stringify({ choices: [{ message: { content: parts } }] }), { status: 200 });
+}
+
 test("sends Chat Completions JSON schema request and parses the constrained proposal", async () => {
   let request;
   const result = await requestQuickRouterProposal({
@@ -78,6 +82,16 @@ test("rejects invalid JSON content and schema violations", async () => {
   );
   await assert.rejects(
     requestQuickRouterProposal({ ...options, fetcher: async () => okResponse(JSON.stringify({ ...proposal, unexpected: "extra" })) }),
+    (error) => error instanceof ProviderError && error.code === "ai_invalid_response",
+  );
+});
+
+test("accepts provider content parts and a JSON markdown fence without weakening schema checks", async () => {
+  const fenced = "```json\n" + JSON.stringify(proposal) + "\n```";
+  const result = await requestQuickRouterProposal({ ...options, fetcher: async () => partsResponse([{ type: "text", text: fenced }]) });
+  assert.deepEqual(result, proposal);
+  await assert.rejects(
+    requestQuickRouterProposal({ ...options, fetcher: async () => partsResponse([{ type: "text", text: "```json\n" + JSON.stringify({ title: "only partial" }) + "\n```" }]) }),
     (error) => error instanceof ProviderError && error.code === "ai_invalid_response",
   );
 });

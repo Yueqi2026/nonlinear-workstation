@@ -89,6 +89,22 @@ function isProposal(value: unknown): value is Proposal {
   );
 }
 
+function contentText(value: unknown): string | undefined {
+  if (typeof value === "string") return value;
+  if (!Array.isArray(value)) return undefined;
+  const parts = value.map((part) => {
+    if (!isRecord(part)) return "";
+    return typeof part.text === "string" ? part.text : typeof part.content === "string" ? part.content : "";
+  }).filter(Boolean);
+  return parts.length ? parts.join("") : undefined;
+}
+
+function parseStructuredContent(content: string): unknown {
+  const trimmed = content.trim();
+  const fenced = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+  return JSON.parse(fenced ? fenced[1] : trimmed);
+}
+
 function classifyUpstreamError(status: number, payload: unknown): ProviderError {
   if (status === 401 || status === 403) return new ProviderError("ai_authentication_failed", 502, "AI 服务认证失败；请检查服务端密钥权限。");
   const payloadText = isRecord(payload) ? JSON.stringify(payload).toLowerCase() : "";
@@ -145,13 +161,13 @@ export async function requestQuickRouterProposal(options: {
   if (!response.ok) throw classifyUpstreamError(response.status, payload);
 
   const content = isRecord(payload) && Array.isArray(payload.choices) && isRecord(payload.choices[0]) && isRecord(payload.choices[0].message)
-    ? payload.choices[0].message.content
+    ? contentText(payload.choices[0].message.content)
     : undefined;
-  if (typeof content !== "string") throw new ProviderError("ai_invalid_response", 502, "AI 服务未返回文本格式的结构化结果。");
+  if (!content) throw new ProviderError("ai_invalid_response", 502, "AI 服务未返回文本格式的结构化结果。");
 
   let result: unknown;
   try {
-    result = JSON.parse(content);
+    result = parseStructuredContent(content);
   } catch {
     throw new ProviderError("ai_invalid_response", 502, "AI 服务返回内容不是有效 JSON。");
   }

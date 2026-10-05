@@ -33,6 +33,7 @@
 ## 验证记录
 
 - `tests/quickrouter.test.mjs`：5/5 通过，覆盖结构化输出、401、模型不可用、非 JSON 和 schema 错误。
+- QuickRouter 响应解析已兼容 OpenAI 兼容接口常见的文本分片和 ```json 围栏；schema 仍保持严格字段约束，新增测试后为 6/6。
 - `tests/science.test.mjs`：5/5 通过；CD8T 确定性拟合、CSV 解析、酵母 2,048 初态穷举和参考序列比较均有测试。
 - `tsc --noEmit`：通过（直接调用 `node_modules/.bin/tsc.cmd`）。
 - `pnpm run build`：通过；Vinext 输出 5 个构建阶段和 `/api/analyze`、`/api/knowledge`、`/api/runs`、`/api/runtime` 路由。
